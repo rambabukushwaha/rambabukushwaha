@@ -1,0 +1,123 @@
+<html>
+<head>
+
+<style>
+  /* Set the width and height of the input boxes */
+  input[type=number] {
+    width: 80px;
+    height: 20px;
+  }
+
+  /* Set the display property of the label and input elements to inline-block */
+  label, input {
+    display: inline-block;
+  }
+
+  /* Add some margin and padding to the elements */
+  label, input, select {
+    margin: 5px;
+    padding: 2px;
+  }
+
+  /* Align the label and input elements vertically */
+  label {
+    vertical-align: middle;
+  }
+</style>
+
+  <title>4 Sided Irregular land Area Calculator</title>
+  <script>
+    // A function to convert feet and inches to meters
+    function feetToMeters(feet, inch) {
+      return (feet + inch / 12) * 0.3048;
+    }
+
+    // A function to calculate the area of a triangle using Heron's formula
+    function triangleArea(a, b, c) {
+      var s = (a + b + c) / 2;
+      return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+
+    // A function to calculate the area and perimeter of an irregular quadrilateral
+    function calculate() {
+      // Get the input values from the form
+      var ab = parseFloat(document.getElementById("ab").value);
+      var ab_inch = parseFloat(document.getElementById("ab_inch").value);
+      var bc = parseFloat(document.getElementById("bc").value);
+      var bc_inch = parseFloat(document.getElementById("bc_inch").value);
+      var cd = parseFloat(document.getElementById("cd").value);
+      var cd_inch = parseFloat(document.getElementById("cd_inch").value);
+      var da = parseFloat(document.getElementById("da").value);
+      var da_inch = parseFloat(document.getElementById("da_inch").value);
+      var diagonal = parseFloat(document.getElementById("diagonal").value);
+      var diagonal_inch = parseFloat(document.getElementById("diagonal_inch").value);
+      var diagonal_option = document.getElementById("diagonal_option").value;
+
+      // Convert the input values to meters
+      var ab_m = feetToMeters(ab, ab_inch);
+      var bc_m = feetToMeters(bc, bc_inch);
+      var cd_m = feetToMeters(cd, cd_inch);
+      var da_m = feetToMeters(da, da_inch);
+      var diagonal_m = feetToMeters(diagonal, diagonal_inch);
+
+      // Declare variables for the area and perimeter
+      var area, perimeter;
+
+      // Check which diagonal option is selected
+      if (diagonal_option == "AC") {
+        // Calculate the area by dividing the quadrilateral into two triangles ABC and ACD
+        var area_abc = triangleArea(ab_m, bc_m, diagonal_m);
+        var area_acd = triangleArea(diagonal_m, cd_m, da_m);
+        area = area_abc + area_acd;
+      } else if (diagonal_option == "BD") {
+        // Calculate the area by dividing the quadrilateral into two triangles ABD and BCD
+        var area_abd = triangleArea(ab_m, diagonal_m, da_m);
+        var area_bcd = triangleArea(diagonal_m, bc_m, cd_m);
+        area = area_abd + area_bcd;
+      } else {
+        // Invalid diagonal option
+        alert("Please select a valid diagonal option");
+        return;
+      }
+
+      // Calculate the perimeter by adding the four sides
+      perimeter = ab_m + bc_m + cd_m + da_m;
+
+      // Convert the area and perimeter to square feet and feet
+      var area_sqft = area / 0.092903;
+      var perimeter_ft = perimeter / 0.3048;
+
+      // Display the results in the output elements
+      document.getElementById("area").innerHTML = area.toFixed(3) + " square meters (" + area_sqft.toFixed(3) + " square feet)";
+      document.getElementById("perimeter").innerHTML = perimeter.toFixed(3) + " meters (" + perimeter_ft.toFixed(3) + " feet)";
+    }
+  </script>
+</head>
+<body>
+  <h1>4 Sided Irregular land Area Calculator</h1>
+  <p>Enter Dimension of Land</p>
+  <form>
+    <label for="ab">Side AB : </label>
+    <input type="number" id="ab" name="ab" min="0" step="0.01" required> Feet
+    <input type="number" id="ab_inch" name="ab_inch" min="0" max="11" step="0.01" required> Inch<br>
+    <label for="bc">Side BC : </label>
+    <input type="number" id="bc" name="bc" min="0" step="0.01" required> Feet
+    <input type="number" id="bc_inch" name="bc_inch" min="0" max="11" step="0.01" required> Inch<br>
+    <label for="cd">Side CD : </label>
+    <input type="number" id="cd" name="cd" min="0" step="0.01" required> Feet
+    <input type="number" id="cd_inch" name="cd_inch" min="0" max="11" step="0.01" required> Inch<br>
+    <label for="da">Side DA : </label>
+    <input type="number" id="da" name="da" min="0" step="0.01" required> Feet 
+    <input type="number" id="da_inch" name="da_inch" min="0" max="11" step="0.01" required> Inch<br>
+    <label for="diagonal">Diagonal : </label><select id="diagonal_option" name="diagonal_option" required>
+      <option value="AC">AC</option>
+      <option value="BD">BD</option>
+    </select>
+    <input type="number" id="diagonal" name="diagonal" min="0" step="0.01" required> Feet 
+    <input type="number" id="diagonal_inch" name="diagonal_inch" min="0" max="11" step="0.01" required> Inch<br>
+    <input type="button" value="Calculate" onclick="calculate()">
+  </form>
+  <p>Total Area of Land : <span id="area"></span></p>
+  <p>Total Perimeter of Land : <span id="perimeter"></span></p>
+</body>
+</html>
